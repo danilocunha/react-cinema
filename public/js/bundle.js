@@ -1527,6 +1527,12 @@ var Cinemas = function (_React$Component) {
       this.setState(state);
     }
   }, {
+    key: 'updateValue',
+    value: function updateValue(newValue) {
+      console.log('State changed to ' + newValue);
+      this.state.selectedCinema = newValue;
+    }
+  }, {
     key: 'logChange',
     value: function logChange(val) {
       console.log("Selected: " + val);
@@ -1534,18 +1540,17 @@ var Cinemas = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      console.log(this.state.cinemas);
-      var options = [{ value: 'one', label: 'One' }, { value: 'two', label: 'Two' }];
+      //console.log(this.state.cinemas);
 
+      var cinemasList = this.state.cinemas.map(function (cinema, index) {
+        return { value: cinema._id, label: cinema.nome };
+      });
+
+      console.log(cinemasList);
       return _react2.default.createElement(
         'div',
         { className: 'section' },
-        _react2.default.createElement(_reactSelect2.default, {
-          name: 'form-field-name',
-          value: 'one',
-          options: options,
-          onChange: this.logChange
-        })
+        _react2.default.createElement(_reactSelect2.default, { ref: 'stateSelect', autofocus: true, options: cinemasList, simpleValue: true, name: 'selected-cinema', value: this.state.selectedCinema, onChange: this.updateValue, searchable: 'true' })
       );
     }
   }]);
@@ -3365,6 +3370,7 @@ var CinemasStore = function () {
 
     this.bindActions(_CinemasActions2.default);
     this.cinemas = [];
+    this.selectedCinema = null;
   }
 
   _createClass(CinemasStore, [{

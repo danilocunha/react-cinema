@@ -44,25 +44,31 @@ class Cinemas extends React.Component {
     this.setState(state);
   }
 
+  updateValue (newValue) {
+		console.log('State changed to ' + newValue);
+		this.state.selectedCinema = newValue;
+ 	}
+
   logChange(val) {
     console.log("Selected: " + val);
   }
 
   render() {
-  	console.log(this.state.cinemas);
-  	var options = [
-    	{ value: 'one', label: 'One' },
-    	{ value: 'two', label: 'Two' }
-	];
+  	//console.log(this.state.cinemas);
 
+  	
+
+  	let cinemasList = this.state.cinemas.map((cinema, index) => {
+  		return  ( { value: cinema._id, label: cinema.nome } );
+  	}
+  	);
+  	
+  	console.log(cinemasList);
     return (
+    	
       <div className="section">
-				<Select
-    				name="form-field-name"
-    				value="one"
-    				options={options}
-    				onChange={this.logChange}
-				/>
+      	<Select ref="stateSelect" autofocus options={cinemasList} simpleValue name="selected-cinema" value={this.state.selectedCinema} onChange={this.updateValue} searchable="true" />
+				
 	  </div>
     );
   }

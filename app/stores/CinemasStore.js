@@ -5,6 +5,7 @@ class CinemasStore {
   constructor() {
     this.bindActions(CinemasActions);
     this.cinemas = [];
+    this.selectedCinema = null;
   }
 
   onGetCinemasSuccess(data) {
