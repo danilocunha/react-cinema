@@ -4,44 +4,12 @@ import CinemasActions from '../actions/CinemasActions';
 class CinemasStore {
   constructor() {
     this.bindActions(CinemasActions);
-    this.nome = '';
-    this.endereco = '';
-    this.helpBlock = [];
-    this.nameValidationState = '';
-    this.genderValidationState = '';
+    this.cinemas = [];
   }
 
-  onAddCinemaSuccess(successMessage) {
-    this.nomeValidationState = 'has-success';
-    this.helpBlock['geral'] = successMessage;
+  onGetCinemasSuccess(data) {
+    this.cinemas = data;
   }
-
-  onAddCinemaFail(errorMessage) {
-    this.nomeValidationState = 'has-error';
-    this.helpBlock['geral'] = errorMessage;
-  }
-
-  onUpdateNome(event) {
-    this.nome = event.target.value;
-    this.nomeValidationState = '';
-    this.helpBlock['nome'] = '';
-  }
-
-  onUpdateEndereco(event) {
-    this.endereco = event.target.value;
-    this.enderecoValidationState = '';
-  }
-
-  onInvalidNome() {
-    this.nomeValidationState = 'has-error';
-    this.helpBlock['nome'] = 'Por favor, preencha o nome.';
-  }
-
-  onInvalidEndereco() {
-    this.enderecoValidationState = 'has-error';
-    this.helpBlock['endereco'] = 'Por favor, preencha o endereço.';
-  }
-
 
 }
 

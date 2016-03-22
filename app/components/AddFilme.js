@@ -1,4 +1,5 @@
 import React from 'react';
+import Select from 'react-select';
 import AddFilmeStore from '../stores/AddFilmeStore';
 import AddFilmeActions from '../actions/AddFilmeActions';
 import Cinemas from './Cinemas';
@@ -11,15 +12,19 @@ class AddFilme extends React.Component {
   }
 
   componentDidMount() {
-    AddFilmStore.listen(this.onChange);
+    AddFilmeStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
-    AddFilmStore.unlisten(this.onChange);
+    AddFilmeStore.unlisten(this.onChange);
   }
 
   onChange(state) {
     this.setState(state);
+  }
+
+  logChange(val) {
+    console.log("Selected: " + val);
   }
 
   handleSubmit(event) {
@@ -43,6 +48,12 @@ class AddFilme extends React.Component {
   }
 
   render() {
+
+    var options = [
+      { value: 'one', label: 'One' },
+      { value: 'two', label: 'Two' }
+    ];
+
     return (
       <div className='container'>
         <div className='row flipInX animated'>
@@ -57,23 +68,20 @@ class AddFilme extends React.Component {
                            onChange={AddFilmeActions.updateNome} autoFocus/>
                     <span className='help-block'>{this.state.helpBlock['nome']}</span>
                   </div>
-                   <div className={'form-group ' + this.state.nomeValidationState}>
+                  <div className={'form-group ' + this.state.nomeValidationState}>
                     <label className='control-label'>Cinema</label>
-                   Olaaa<br/>
-                    <Cinemas/>
+                        <Cinemas/>
                     <span className='help-block'>{this.state.helpBlock['cinema']}</span>
                   </div>
-                  <div className={'form-group ' + this.state.genderValidationState}>
-                    <div className='radio radio-inline'>
-                      <input type='radio' name='gender' id='female' value='Female' checked={this.state.gender === 'Female'}
-                             onChange={AddFilmeActions.updateGender}/>
-                      <label htmlFor='female'>Female</label>
-                    </div>
-                    <div className='radio radio-inline'>
-                      <input type='radio' name='gender' id='male' value='Male' checked={this.state.gender === 'Male'}
-                             onChange={AddFilmeActions.updateGender}/>
-                      <label htmlFor='male'>Male</label>
-                    </div>
+                  <div className={'form-group ' + this.state.nomeValidationState}>
+                    <label className='control-label'>Teste</label>
+                        <Select
+                          name="form-field-name"
+                          value="one"
+                          options={options}
+                          onChange={this.logChange}
+                        />
+                    <span className='help-block'>{this.state.helpBlock['teste']}</span>
                   </div>
                   <button type='submit' className='btn btn-primary'>Submit</button>
                 </form>

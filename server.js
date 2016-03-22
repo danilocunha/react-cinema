@@ -21,12 +21,37 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
-mongoose.connect(config.database);
+var options = { server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }, 
+                replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } } }; 
+
+mongoose.connect(config.database, options);
+
+mongoose.connection.on('connected', function () {  
+  console.log('Mongoose default connection open to ' + config.database);
+}); 
+
 mongoose.connection.on('error', function() {
-    console.info('Error: Could not connect to MongoDB. Did you forget to run `mongod`?');
+    console.log('Error: Could not connect to MongoDB. Did you forget to run `mongod`?');
+});
+
+mongoose.connection.on('disconnected', function () {  
+  console.log('Mongoose default connection disconnected'); 
 });
 
 var app = express();
+
+// Handler in case Mongo  goes down
+app.use(function(req, res, next) {
+  // We lost connection!
+  if (1 !== mongoose.connection.readyState) {
+
+    // Reconnect if we can
+    res.status(503);
+    throw new Error('Mongo not available');
+  }
+  next();
+
+});
 
 app.set('port', process.env.PORT || 3000);
 app.use(logger('dev'));
@@ -456,6 +481,35 @@ app.post('/api/cinema', function(req, res, next) {
 
 
 });
+
+/**
+ * GET /api/cinema
+ * Retorna todos os cinemas.
+ */
+app.get('/api/cinema', function(req, res, next) {
+
+  console.log("Vou procurar os estabelecimentos");
+
+  Estabelecimento.find({}, function(err, cinemas) {
+    console.log("Olha nois pesquisando os cinemas");
+    if (err) return next(err);
+
+    res.send(cinemas);
+
+   /* var cinemaMap = {};
+
+    cinemas.forEach(function(cinema) {
+        cinemaMap[cinema._id] = cinema;
+    });
+
+    res.send(cinemaMap);*/
+
+    
+});
+
+
+
+});
 /**
  * POST /api/report
  * Reports a character. Character is removed after 4 reports.
@@ -652,6 +706,14 @@ app.use(function(req, res) {
     });
 });
 
+/*app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: err
+    });
+  });*/
+
 app.use(function(err, req, res, next) {
     console.log(err.stack.red);
     res.status(err.status || 500);
@@ -659,6 +721,7 @@ app.use(function(err, req, res, next) {
         message: err.message
     });
 });
+
 /**
  * Socket.io stuff.
  */

@@ -5,21 +5,35 @@ import CinemasActions from '../actions/CinemasActions';
 
 class Cinemas extends React.Component {
   constructor(props) {
-    super(props);
-    
+    super(props);    
     this.state = CinemasStore.getState();
     this.onChange = this.onChange.bind(this);
+  }
+
+
+  loadCommentsFromServer() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      success: (data) => {
+        this.setState({data: data});
+      },
+      error: (xhr, status, err) => {
+        console.error(this.props.url, status, err.toString());
+      }
+    });
   }
 
   componentDidMount() {
     CinemasStore.listen(this.onChange);
     this.cinemas = CinemasActions.getCinemas();
     console.log("Kd a porra");
+    
   }
 
   componentWillUnmount() {
     CinemasStore.unlisten(this.onChange);
-    $(document.body).removeClass();
+    //$(document.body).removeClass();
   }
 
   componentDidUpdate(prevProps) {
@@ -30,11 +44,25 @@ class Cinemas extends React.Component {
     this.setState(state);
   }
 
+  logChange(val) {
+    console.log("Selected: " + val);
+  }
+
   render() {
+  	console.log(this.state.cinemas);
+  	var options = [
+    	{ value: 'one', label: 'One' },
+    	{ value: 'two', label: 'Two' }
+	];
+
     return (
       <div className="section">
-				<h3 className="section-heading">Teste</h3>
-				<Select ref="stateSelect" autofocus options={this.cinemas} simpleValue clearable={this.state.clearable} name="selected-state" disabled={this.state.disabled} value={this.state.selectValue} onChange={this.updateValue} searchable={this.state.searchable} />
+				<Select
+    				name="form-field-name"
+    				value="one"
+    				options={options}
+    				onChange={this.logChange}
+				/>
 	  </div>
     );
   }
